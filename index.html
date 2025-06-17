@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>法律医疗助手</title>
+  <style>
+    body { font-family: sans-serif; background: #f7f7f7; padding: 2em; }
+    #chatbox { background: white; padding: 1em; height: 400px; overflow-y: auto; border: 1px solid #ccc; margin-bottom: 1em; }
+    .user { color: blue; margin-top: 0.5em; }
+    .bot { color: green; margin-top: 0.5em; }
+  </style>
+</head>
+<body>
+  <h2>法律医疗助手</h2>
+  <div id="chatbox"></div>
+  <input type="text" id="input" placeholder="请输入你的问题..." style="width:70%;padding:8px;">
+  <button onclick="ask()">发送</button>
+
+  <script>
+    async function ask() {
+      const input = document.getElementById('input');
+      const chatbox = document.getElementById('chatbox');
+      const question = input.value.trim();
+      if (!question) return;
+
+      chatbox.innerHTML += `<div class="user">你：${question}</div>`;
+      input.value = "";
+
+      const response = await fetch('/api/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question })
+      });
+      const data = await response.json();
+      chatbox.innerHTML += `<div class="bot">助手：${data.answer}</div>`;
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
